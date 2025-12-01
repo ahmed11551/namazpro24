@@ -63,36 +63,37 @@ export default function PrayerDebtModule() {
         }),
       });
       const data = await response.json();
-      if (data.debt_calculation) {
+      if (data.debt_calculation && data.debt_calculation.missed_prayers) {
+        const missedPrayers = data.debt_calculation.missed_prayers;
         setDebt({
-          total: Object.values(data.debt_calculation.missed_prayers).reduce(
-            (sum: number, val: number) => sum + val,
+          total: Object.values(missedPrayers).reduce(
+            (sum: number, val: unknown) => sum + (typeof val === 'number' ? val : 0),
             0
           ),
           completed: 0,
           byPrayer: {
             fajr: {
-              total: data.debt_calculation.missed_prayers.fajr,
+              total: typeof missedPrayers.fajr === 'number' ? missedPrayers.fajr : 0,
               completed: 0,
             },
             dhuhr: {
-              total: data.debt_calculation.missed_prayers.dhuhr,
+              total: typeof missedPrayers.dhuhr === 'number' ? missedPrayers.dhuhr : 0,
               completed: 0,
             },
             asr: {
-              total: data.debt_calculation.missed_prayers.asr,
+              total: typeof missedPrayers.asr === 'number' ? missedPrayers.asr : 0,
               completed: 0,
             },
             maghrib: {
-              total: data.debt_calculation.missed_prayers.maghrib,
+              total: typeof missedPrayers.maghrib === 'number' ? missedPrayers.maghrib : 0,
               completed: 0,
             },
             isha: {
-              total: data.debt_calculation.missed_prayers.isha,
+              total: typeof missedPrayers.isha === 'number' ? missedPrayers.isha : 0,
               completed: 0,
             },
             witr: {
-              total: data.debt_calculation.missed_prayers.witr,
+              total: typeof missedPrayers.witr === 'number' ? missedPrayers.witr : 0,
               completed: 0,
             },
           },

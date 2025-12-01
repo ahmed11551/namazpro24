@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Play, Pause, RotateCcw, Plus, Minus, Settings } from 'lucide-react';
@@ -22,16 +22,7 @@ export default function TasbihModule() {
   const [autoInterval, setAutoInterval] = useState(1); // seconds
   const [showSettings, setShowSettings] = useState(false);
 
-  useEffect(() => {
-    if (isAuto && session && autoInterval > 0) {
-      const interval = setInterval(() => {
-        handleTap();
-      }, autoInterval * 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isAuto, session, autoInterval]);
-
-  const handleTap = async () => {
+  const handleTap = useCallback(async () => {
     if (!session) return;
     const newCount = session.isReverse
       ? Math.max(0, session.count - 1)
@@ -58,7 +49,16 @@ export default function TasbihModule() {
     } catch (error) {
       console.error('Error saving offline event:', error);
     }
-  };
+  }, [session]);
+
+  useEffect(() => {
+    if (isAuto && session && autoInterval > 0) {
+      const interval = setInterval(() => {
+        handleTap();
+      }, autoInterval * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuto, session, autoInterval, handleTap]);
 
   const handleReset = () => {
     if (!session) return;
